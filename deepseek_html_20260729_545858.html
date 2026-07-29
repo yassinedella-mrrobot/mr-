@@ -1396,5 +1396,39 @@
       }
     })();
   </script>
+  <style>
+    .location-card{position:relative}
+    .arabic-overlay{position:absolute;left:12px;top:12px;background:rgba(11,94,173,0.9);color:#fff;padding:6px 10px;border-radius:8px;font-weight:700;font-size:14px;z-index:25;box-shadow:0 6px 14px rgba(0,0,0,0.2);direction:rtl}
+  </style>
+  <script>
+    (function(){
+      document.addEventListener('DOMContentLoaded', function(){
+        var map = {
+          'Siège Oran':'المقر الرئيسي وهران',
+          'Centre Tlemcen':'مركز تلمسان',
+          'Centre Saida':'مركز سعيدة',
+          'Centre Tiaret':'مركز تيارت',
+          'Centre Mostaganem':'مركز مستغانم',
+          'Centre Relizane':'مركز غليزان',
+          'Centre Chlef':'مركز الشلف',
+          'Centre Sétif':'مركز سطيف',
+          'Centre Annaba':'مركز عنابة',
+          'Centre Constantine':'مركز قسنطينة'
+        };
+        document.querySelectorAll('.location-card').forEach(function(card){
+          var img = card.querySelector('img.location-photo');
+          if(!img) return;
+          var frSpan = card.querySelector('h3 span[data-fr]');
+          var en = frSpan ? frSpan.textContent.trim() : (img.alt || '').replace(/^Si[eè]ge\s*/i,'Siège ').replace(/^Centre\s*/i,'Centre ');
+          var ar = map[en];
+          if(!ar) return;
+          var ov = document.createElement('div');
+          ov.className = 'arabic-overlay';
+          ov.textContent = ar;
+          card.appendChild(ov);
+        });
+      });
+    })();
+  </script>
 </body>
 </html>

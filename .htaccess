@@ -1,0 +1,14 @@
+# Basic password protection (Apache)
+# Place .htpasswd in same directory or adjust AuthUserFile path
+# To create a password file on the server (Unix):
+#   sudo apt-get install apache2-utils    # if htpasswd not installed
+#   htpasswd -c .htpasswd username       # you'll be prompted for password
+# For existing file (add another user):
+#   htpasswd .htpasswd otheruser
+
+AuthType Basic
+AuthName "Restricted Area - AUDIFEL"
+AuthUserFile "${DOCUMENT_ROOT}/.htpasswd"
+Require valid-user
+
+# Recommended: serve only if running under Apache. Remove or adapt for other servers.
