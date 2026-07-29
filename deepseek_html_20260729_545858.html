@@ -799,10 +799,51 @@
       <h2 class="section-title"><span data-fr>À Propos de Nous</span><span data-ar>من نحن</span></h2>
       <div class="divider"></div>
 
-      <!-- PHOTO ÉQUIPE PLACEHOLDER -->
+      <!-- PHOTO ÉQUIPE : Façade Audifel -->
       <div class="team-photo">
-        <div class="placeholder-img" data-text="🖼️ Photo de l'équipe Audifel - Dr Adnan Fattal & Dr Naima Lazouni" style="height:300px; max-width:700px;"></div>
+        <img id="teamPhoto" src="images/Façade Audifel.jpg" alt="Façade Audifel" style="max-width:700px;height:auto;border-radius:12px;border:4px solid white;box-shadow:0 12px 30px rgba(11,94,173,0.18);">
+        <div style="margin-top:12px; display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:wrap">
+          <label style="background:#0b5ead;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700;">
+            Choisir une photo<input id="teamUpload" type="file" accept="image/*" style="display:none">
+          </label>
+          <button id="teamReset" type="button" style="background:#e4effa;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700;color:#0b5ead;">Réinitialiser</button>
+        </div>
+        <p class="gallery-hint" style="margin-top:8px;">La photo sélectionnée sera affichée et stockée localement dans ton navigateur (pas sur le serveur). Pour remplacer définitivement le fichier sur le site, téléverse un fichier vers le dossier <code>images/</code> via FTP ou le dépôt.</p>
       </div>
+      <script>
+        (function(){
+          const img = document.getElementById('teamPhoto');
+          const input = document.getElementById('teamUpload');
+          const resetBtn = document.getElementById('teamReset');
+          const storageKey = 'audifel-team-photo';
+          try{
+            const stored = localStorage.getItem(storageKey);
+            if(stored) img.src = stored;
+          }catch(e){}
+
+          if(input){
+            input.addEventListener('change', function(e){
+              const file = e.target.files && e.target.files[0];
+              if(!file) return;
+              if(!file.type.startsWith('image/')){ alert('Fichier non supporté'); return; }
+              const reader = new FileReader();
+              reader.onload = function(ev){
+                img.src = ev.target.result;
+                try{ localStorage.setItem(storageKey, ev.target.result); }catch(e){}
+              };
+              reader.readAsDataURL(file);
+            });
+          }
+
+          if(resetBtn){
+            resetBtn.addEventListener('click', function(){
+              try{ localStorage.removeItem(storageKey); }catch(e){}
+              img.src = 'images/Façade Audifel.jpg';
+              if(input) input.value = '';
+            });
+          }
+        })();
+      </script>
 
       <div class="about-box">
         <p data-fr>
@@ -1031,6 +1072,59 @@
       </div>
     </section>
 
+    <!-- GALERIE -->
+    <section id="gallery" style="background: #fff;">
+      <h2 class="section-title"><span data-fr>Galerie Photos</span><span data-ar>معرض الصور</span></h2>
+      <div class="divider"></div>
+      <style>
+        .gallery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin:18px 0 10px}
+        .gallery-item{display:block;border-radius:12px;overflow:hidden;box-shadow:0 8px 20px rgba(11,94,173,0.08);}
+        .gallery-item img{width:100%;height:160px;object-fit:cover;display:block;transition:transform .25s}
+        .gallery-item:hover img{transform:scale(1.04)}
+        .gallery-hint{color:#516b86;text-align:center;margin-top:12px;font-size:0.95rem}
+        /* lightbox styles */
+        .lightbox-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;padding:24px;z-index:9999}
+        .lightbox-overlay img{max-width:100%;max-height:100%;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,0.6)}
+      </style>
+
+      <div class="gallery-grid">
+        <a class="gallery-item" href="images/gallery/photo1.svg"><img src="images/gallery/photo1.svg" alt="Photo 1" loading="lazy"></a>
+        <a class="gallery-item" href="images/gallery/photo2.jpg"><img src="images/gallery/photo2.jpg" alt="Photo 2" loading="lazy"></a>
+        <a class="gallery-item" href="images/gallery/photo3.jpg"><img src="images/gallery/photo3.jpg" alt="Photo 3" loading="lazy"></a>
+        <a class="gallery-item" href="images/gallery/photo4.jpg"><img src="images/gallery/photo4.jpg" alt="Photo 4" loading="lazy"></a>
+        <a class="gallery-item" href="images/gallery/photo5.jpg"><img src="images/gallery/photo5.jpg" alt="Photo 5" loading="lazy"></a>
+        <a class="gallery-item" href="images/gallery/photo6.jpg"><img src="images/gallery/photo6.jpg" alt="Photo 6" loading="lazy"></a>
+      </div>
+
+      <p class="gallery-hint" data-fr>Place tes photos dans le dossier <code>images/gallery/</code> et nomme-les photo1.jpg ... photo6.jpg. Les images seront affichées automatiquement. Remplace ou ajoute des éléments <code>&lt;a&gt;</code> si tu veux plus de photos.</p>
+      <p class="gallery-hint" data-ar>ضع صورك في المجلد <code>images/gallery/</code> وسميها photo1.jpg ... photo6.jpg. سيتم عرض الصور تلقائياً.</p>
+
+      <script>
+        (function(){
+          // simple lightbox: open clicked image in overlay
+          function openLightbox(src, alt){
+            const overlay = document.createElement('div');
+            overlay.className = 'lightbox-overlay';
+            overlay.tabIndex = 0;
+            overlay.innerHTML = '<img src="'+src+'" alt="'+(alt||'')+'">';
+            overlay.addEventListener('click', function(){ document.body.removeChild(overlay); });
+            overlay.addEventListener('keydown', function(e){ if(e.key === 'Escape') { if(document.body.contains(overlay)) document.body.removeChild(overlay); } });
+            document.body.appendChild(overlay);
+            overlay.focus();
+          }
+
+          document.addEventListener('click', function(e){
+            const a = e.target.closest('.gallery-item');
+            if(a){
+              e.preventDefault();
+              const img = a.querySelector('img');
+              const href = a.getAttribute('href') || img.src;
+              openLightbox(href, img.alt);
+            }
+          });
+        })();
+      </script>
+
     <!-- CONTACT -->
     <section id="contact">
       <h2 class="section-title"><span data-fr>Contactez-nous</span><span data-ar>اتصل بنا</span></h2>
@@ -1054,15 +1148,130 @@
     (function() {
       const body = document.body;
       const toggleBtn = document.getElementById('langToggle');
-      body.classList.remove('rtl');
-      document.documentElement.lang = 'fr';
-      toggleBtn.addEventListener('click', function() {
-        const isRtl = body.classList.toggle('rtl');
-        document.documentElement.lang = isRtl ? 'ar' : 'fr';
-        try { localStorage.setItem('audifel-lang', isRtl ? 'ar' : 'fr'); } catch(e) {}
-      });
+
+      // Apply saved preference (if any) safely on load
+      try {
+        const saved = localStorage.getItem('audifel-lang');
+        if (saved === 'ar') {
+          body.classList.add('rtl');
+          document.documentElement.lang = 'ar';
+        } else {
+          body.classList.remove('rtl');
+          document.documentElement.lang = 'fr';
+        }
+      } catch (e) { /* localStorage may be unavailable */ }
+
+      // Only attach handler if the button exists
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', function() {
+          const isRtl = body.classList.toggle('rtl');
+          document.documentElement.lang = isRtl ? 'ar' : 'fr';
+          try { localStorage.setItem('audifel-lang', isRtl ? 'ar' : 'fr'); } catch (e) {}
+        });
+      }
+
+      // Ensure DOMContentLoaded fallback (safe)
       window.addEventListener('DOMContentLoaded', function() {
-        try { if(localStorage.getItem('audifel-lang') === 'ar') { body.classList.add('rtl'); document.documentElement.lang = 'ar'; } } catch(e) {}
+        try {
+          const saved = localStorage.getItem('audifel-lang');
+          if (saved === 'ar') {
+            body.classList.add('rtl');
+            document.documentElement.lang = 'ar';
+          }
+        } catch (e) {}
+      });
+    })();
+  </script>
+  <script>
+    // Enable adding/uploading images on any image across the page.
+    (function(){
+      // create hidden file input used for all images
+      const upload = document.createElement('input');
+      upload.type = 'file';
+      upload.accept = 'image/*';
+      upload.style.display = 'none';
+      document.body.appendChild(upload);
+
+      // inject lightweight CSS for overlay buttons (add + reset)
+      const css = `
+        .photo-edit-wrapper{position:relative;display:inline-block}
+        .photo-edit-wrapper img{display:block;max-width:100%;height:auto}
+        .add-photo-overlay{position:absolute;top:8px;right:8px;z-index:20;background:linear-gradient(145deg,#0b5ead,#0a4f8a);color:#fff;border:0;padding:6px 8px;border-radius:8px;cursor:pointer;font-weight:700;box-shadow:0 6px 16px rgba(11,94,173,0.35);display:flex;align-items:center;justify-content:center}
+        .add-photo-overlay:hover{transform:scale(1.05)}
+        .reset-photo-overlay{position:absolute;top:8px;left:8px;z-index:20;background:#fff;border:1px solid #d5e7fa;padding:6px 8px;border-radius:8px;cursor:pointer;font-weight:700;color:#0b5ead;box-shadow:0 6px 14px rgba(11,94,173,0.06)}
+        .reset-photo-overlay:hover{transform:scale(1.05)}
+        .add-photo-icon{width:16px;height:16px;display:block}
+        .reset-icon{width:14px;height:14px;display:block}
+      `;
+      const styleEl = document.createElement('style'); styleEl.appendChild(document.createTextNode(css)); document.head.appendChild(styleEl);
+
+      // process all images (except ones explicitly opted out)
+      const imgs = Array.from(document.querySelectorAll('img'));
+      imgs.forEach((img, idx) => {
+        if (img.closest('.photo-no-edit')) return; // opt-out class
+        // avoid double-wrapping if already wrapped
+        if (img.parentElement && img.parentElement.classList.contains('photo-edit-wrapper')) return;
+
+        // create wrapper and overlay buttons
+        const wrapper = document.createElement('span');
+        wrapper.className = 'photo-edit-wrapper';
+        // preserve layout: if original img was block-level, keep wrapper block
+        const imgDisplay = window.getComputedStyle(img).display || 'inline-block';
+        wrapper.style.display = imgDisplay === 'block' ? 'block' : 'inline-block';
+
+        // remember original src so reset can restore it
+        const originalSrc = img.getAttribute('src');
+
+        img.parentNode.insertBefore(wrapper, img);
+        wrapper.appendChild(img);
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'add-photo-overlay';
+        btn.title = 'Ajouter / remplacer la photo';
+        btn.setAttribute('aria-label', 'Ajouter ou remplacer la photo');
+        // SVG plus icon
+        btn.innerHTML = '<svg class="add-photo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" fill="#ffffff" opacity="0.12"/><path d="M12 6v12M6 12h12" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        wrapper.appendChild(btn);
+
+        const resetBtn = document.createElement('button');
+        resetBtn.type = 'button';
+        resetBtn.className = 'reset-photo-overlay';
+        resetBtn.title = 'Restaurer l\'image originale';
+        resetBtn.setAttribute('aria-label','Restaurer l\'image originale');
+        resetBtn.innerHTML = '<svg class="reset-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 11a8 8 0 10-2.3 5.3L20 20" stroke="#0b5ead" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        wrapper.appendChild(resetBtn);
+
+        // storage key to persist per-image (use image id if present, else index)
+        const key = 'audifel-img-' + (img.id ? img.id : idx);
+        try{
+          const stored = localStorage.getItem(key);
+          if (stored) img.src = stored;
+        }catch(e){}
+
+        btn.addEventListener('click', function(e){
+          e.preventDefault();
+          upload.onchange = function(ev){
+            const file = ev.target.files && ev.target.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) { alert('Fichier non supporté'); return; }
+            const reader = new FileReader();
+            reader.onload = function(loadEv){
+              img.src = loadEv.target.result;
+              try{ localStorage.setItem(key, loadEv.target.result); } catch(e) {}
+            };
+            reader.readAsDataURL(file);
+            // reset input for future selections
+            upload.value = '';
+          };
+          upload.click();
+        });
+
+        resetBtn.addEventListener('click', function(e){
+          e.preventDefault();
+          try{ localStorage.removeItem(key); } catch(e) {}
+          img.src = originalSrc;
+        });
       });
     })();
   </script>
