@@ -753,6 +753,26 @@
   </style>
 </head>
 <body>
+  <!-- Auth overlay: client-side admin setup + login (stored locally, not a server-side security) -->
+  <div id="authOverlay" aria-hidden="true">
+    <div class="auth-box" id="authBox">
+      <h2 id="authTitle">Se connecter</h2>
+      <form id="authForm">
+        <div id="setupHint" style="display:none; font-size:0.95rem; color:#3a556f; margin-bottom:8px;">Aucune identité administrateur trouvée. Crée un identifiant et un mot de passe.</div>
+        <input id="authUser" type="text" placeholder="Nom d'utilisateur" required style="width:100%;padding:10px;border-radius:8px;border:1px solid #d0e6fb;margin-bottom:8px;">
+        <input id="authPass" type="password" placeholder="Mot de passe" required style="width:100%;padding:10px;border-radius:8px;border:1px solid #d0e6fb;margin-bottom:8px;">
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;">
+          <button type="submit" id="authSubmit" style="background:#0b5ead;color:white;padding:10px 16px;border-radius:10px;border:none;cursor:pointer;">Valider</button>
+          <button type="button" id="authReset" style="display:none;background:#f1f5f9;color:#0b5ead;padding:10px 12px;border-radius:10px;border:1px solid #cfe6ff;cursor:pointer;">Réinitialiser</button>
+        </div>
+      </form>
+      <p style="font-size:0.85rem;color:#577188;margin-top:12px;">Sécurité : ce mécanisme est côté client (stockage local). Pour une vraie sécurité, configure l'authentification côté serveur (HTTP Basic ou endpoint sécurisé).</p>
+    </div>
+  </div>
+  <style>
+    #authOverlay{position:fixed;inset:0;background:rgba(5,15,28,0.72);display:flex;align-items:center;justify-content:center;z-index:10000}
+    .auth-box{background:white;padding:20px;border-radius:12px;width:360px;max-width:92%;box-shadow:0 12px 40px rgba(3,33,66,0.5);text-align:center}
+  </style>
   <header>
     <div class="header-inner">
       <div class="logo">
@@ -1299,6 +1319,81 @@
           img.src = originalSrc;
         });
       });
+    })();
+  </script>
+  <script>
+    (function(){
+      const overlay = document.getElementById('authOverlay');
+      const form = document.getElementById('authForm');
+      const userIn = document.getElementById('authUser');
+      const passIn = document.getElementById('authPass');
+      const title = document.getElementById('authTitle');
+      const setupHint = document.getElementById('setupHint');
+      const resetBtn = document.getElementById('authReset');
+
+      function toHex(buffer){
+        const hexCodes = [];
+        const view = new DataView(buffer);
+        for (let i = 0; i < view.byteLength; i += 4) {
+          // read 4 bytes and convert
+          const value = view.getUint32(i);
+          const stringValue = value.toString(16).padStart(8, '0');
+          hexCodes.push(stringValue);
+        }
+        return hexCodes.join('');
+      }
+
+      async function hashPwd(pwd){
+        const enc = new TextEncoder().encode(pwd);
+        const hash = await (window.crypto && crypto.subtle ? crypto.subtle.digest('SHA-256', enc) : Promise.resolve(new Uint8Array()));
+        return toHex(hash);
+      }
+
+      function showOverlay(){ if(overlay){ overlay.style.display = 'flex'; overlay.setAttribute('aria-hidden','false'); } }
+      function hideOverlay(){ if(overlay){ overlay.style.display = 'none'; overlay.setAttribute('aria-hidden','true'); } }
+
+      const adminRaw = (function(){ try{ return localStorage.getItem('audifel-admin'); }catch(e){return null;} })();
+      let isSetup = !adminRaw;
+
+      if(isSetup){ if(title) title.textContent = 'Créer un identifiant administrateur'; if(setupHint) setupHint.style.display = 'block'; if(resetBtn) resetBtn.style.display = 'none'; }
+      else { if(title) title.textContent = 'Se connecter'; if(setupHint) setupHint.style.display = 'none'; if(resetBtn) resetBtn.style.display = 'inline-block'; }
+
+      // always require authentication overlay unless session exists
+      try{
+        const session = localStorage.getItem('audifel-session');
+        if(!session) showOverlay(); else hideOverlay();
+      }catch(e){ showOverlay(); }
+
+      if(form){
+        form.addEventListener('submit', async function(e){
+          e.preventDefault();
+          const u = userIn && userIn.value ? userIn.value.trim() : '';
+          const p = passIn && passIn.value ? passIn.value : '';
+          if(!u || !p){ alert("Remplis les deux champs"); return; }
+          if(isSetup){
+            const h = await hashPwd(p);
+            try{ localStorage.setItem('audifel-admin', JSON.stringify({user:u,hash:h})); localStorage.setItem('audifel-session', Date.now().toString()); }catch(e){ alert('Impossible d\u0027enregistrer les identifiants : ' + e.message); }
+            hideOverlay();
+            return;
+          } else {
+            try{
+              const admin = JSON.parse(adminRaw);
+              const h = await hashPwd(p);
+              if(admin && admin.user === u && admin.hash === h){ localStorage.setItem('audifel-session', Date.now().toString()); hideOverlay(); }
+              else { alert("Nom d'utilisateur ou mot de passe incorrect"); }
+            }catch(err){ alert('Erreur lors de la vérification des identifiants'); }
+          }
+        });
+      }
+
+      if(resetBtn){
+        resetBtn.addEventListener('click', function(){
+          if(confirm('Supprimer les identifiants administrateur enregistrés ?')){
+            try{ localStorage.removeItem('audifel-admin'); localStorage.removeItem('audifel-session'); }catch(e){}
+            location.reload();
+          }
+        });
+      }
     })();
   </script>
 </body>
