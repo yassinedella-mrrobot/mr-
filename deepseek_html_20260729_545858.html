@@ -753,6 +753,26 @@
   </style>
 </head>
 <body>
+  <!-- Auth overlay: client-side admin setup + login (stored locally, not a server-side security) -->
+  <div id="authOverlay" aria-hidden="true">
+    <div class="auth-box" id="authBox">
+      <h2 id="authTitle">Se connecter</h2>
+      <form id="authForm">
+        <div id="setupHint" style="display:none; font-size:0.95rem; color:#3a556f; margin-bottom:8px;">Aucune identité administrateur trouvée. Crée un identifiant et un mot de passe.</div>
+        <input id="authUser" type="text" placeholder="Nom d'utilisateur" required style="width:100%;padding:10px;border-radius:8px;border:1px solid #d0e6fb;margin-bottom:8px;">
+        <input id="authPass" type="password" placeholder="Mot de passe" required style="width:100%;padding:10px;border-radius:8px;border:1px solid #d0e6fb;margin-bottom:8px;">
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;">
+          <button type="submit" id="authSubmit" style="background:#0b5ead;color:white;padding:10px 16px;border-radius:10px;border:none;cursor:pointer;">Valider</button>
+          <button type="button" id="authReset" style="display:none;background:#f1f5f9;color:#0b5ead;padding:10px 12px;border-radius:10px;border:1px solid #cfe6ff;cursor:pointer;">Réinitialiser</button>
+        </div>
+      </form>
+      <p style="font-size:0.85rem;color:#577188;margin-top:12px;">Sécurité : ce mécanisme est côté client (stockage local). Pour une vraie sécurité, configure l'authentification côté serveur (HTTP Basic ou endpoint sécurisé).</p>
+    </div>
+  </div>
+  <style>
+    #authOverlay{position:fixed;inset:0;background:rgba(5,15,28,0.72);display:flex;align-items:center;justify-content:center;z-index:10000}
+    .auth-box{background:white;padding:20px;border-radius:12px;width:360px;max-width:92%;box-shadow:0 12px 40px rgba(3,33,66,0.5);text-align:center}
+  </style>
   <header>
     <div class="header-inner">
       <div class="logo">
@@ -772,10 +792,20 @@
         <a href="#localisations"><span data-fr>Centres</span><span data-ar>مراكز</span></a>
         <a href="#contact"><span data-fr>Contact</span><span data-ar>اتصال</span></a>
       </nav>
-      <button class="lang-btn" id="langToggle">
-        <span data-fr>🇩🇿 العربية</span>
-        <span data-ar>🇫🇷 Français</span>
-      </button>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="social-links" style="display:flex;gap:8px;align-items:center">
+          <a href="https://www.facebook.com/Audifel.Sarl?locale=fr_FR" target="_blank" rel="noopener" aria-label="Facebook" style="display:inline-flex;align-items:center;gap:6px;color:#0b5ead;text-decoration:none;font-weight:700">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M22 12.07C22 6.59 17.52 2 12.03 2 6.54 2 2.06 6.59 2.06 12.07c0 4.98 3.66 9.11 8.44 9.86v-6.98H8.9v-2.88h1.6V9.41c0-1.58.94-2.46 2.37-2.46.69 0 1.42.12 1.42.12v1.56h-.8c-.79 0-1.04.49-1.04.99v1.19h1.77l-.28 2.88h-1.49v6.98c4.78-.75 8.44-4.88 8.44-9.86z" fill="#0b5ead"/></svg>
+          </a>
+          <a href="https://wa.me/213661103501" target="_blank" rel="noopener" aria-label="WhatsApp" style="display:inline-flex;align-items:center;gap:6px;color:#25D366;text-decoration:none;font-weight:700">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M20.5 3.5A11.7 11.7 0 0012 1C6 1 1.3 5.7 1.3 11.7c0 2 .5 3.9 1.4 5.6L1 23l5.9-1.5A11.6 11.6 0 0012 22c6 0 10.5-4.7 10.5-10.5 0-2.8-1.1-5.4-3-7.9zM12 20c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.6.9.9-3.4-.2-.4A8.5 8.5 0 013.5 11.7C3.5 7 7.3 3.2 12 3.2c2.2 0 4.2.8 5.7 2.3 1.5 1.5 2.3 3.6 2.3 5.7C20 16.7 16.2 20 12 20zm3.1-6.1c-.2-.1-1.1-.5-1.2-.5-.1-.1-.2-.1-.4.1-.1.2-.5.5-.6.6-.1.1-.2.1-.4 0-.7-.5-1.2-.9-1.7-1.6-.1-.2 0-.3.1-.4.1-.1.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.4-1-.6-1.4-.1-.3-.3-.3-.4-.3-.3 0-.5 0-.8 0-.3 0-.9.1-1.4.5-.5.4-1 1-1 1.3 0 .3.6.9 1.4 1.6.8.7 1.5 1.1 2 1.4.5.3 1 .5 1.3.6.3.1.5.1.6.1.1 0 .6-.2 1.1-.6.5-.4.8-.8 1-1.1.2-.3.1-.5 0-.6z" fill="#25D366"/></svg>
+          </a>
+        </div>
+        <button class="lang-btn" id="langToggle">
+          <span data-fr>🇩🇿 العربية</span>
+          <span data-ar>🇫🇷 Français</span>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -799,10 +829,51 @@
       <h2 class="section-title"><span data-fr>À Propos de Nous</span><span data-ar>من نحن</span></h2>
       <div class="divider"></div>
 
-      <!-- PHOTO ÉQUIPE PLACEHOLDER -->
+      <!-- PHOTO ÉQUIPE : Façade Audifel -->
       <div class="team-photo">
-        <div class="placeholder-img" data-text="🖼️ Photo de l'équipe Audifel - Dr Adnan Fattal & Dr Naima Lazouni" style="height:300px; max-width:700px;"></div>
+        <img id="teamPhoto" src="images/Façade Audifel.jpg" alt="Façade Audifel" style="max-width:700px;height:auto;border-radius:12px;border:4px solid white;box-shadow:0 12px 30px rgba(11,94,173,0.18);">
+        <div style="margin-top:12px; display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:wrap">
+          <label style="background:#0b5ead;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700;">
+            Choisir une photo<input id="teamUpload" type="file" accept="image/*" style="display:none">
+          </label>
+          <button id="teamReset" type="button" style="background:#e4effa;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700;color:#0b5ead;">Réinitialiser</button>
+        </div>
+        <p class="gallery-hint" style="margin-top:8px;">La photo sélectionnée sera affichée et stockée localement dans ton navigateur (pas sur le serveur). Pour remplacer définitivement le fichier sur le site, téléverse un fichier vers le dossier <code>images/</code> via FTP ou le dépôt.</p>
       </div>
+      <script>
+        (function(){
+          const img = document.getElementById('teamPhoto');
+          const input = document.getElementById('teamUpload');
+          const resetBtn = document.getElementById('teamReset');
+          const storageKey = 'audifel-team-photo';
+          try{
+            const stored = localStorage.getItem(storageKey);
+            if(stored) img.src = stored;
+          }catch(e){}
+
+          if(input){
+            input.addEventListener('change', function(e){
+              const file = e.target.files && e.target.files[0];
+              if(!file) return;
+              if(!file.type.startsWith('image/')){ alert('Fichier non supporté'); return; }
+              const reader = new FileReader();
+              reader.onload = function(ev){
+                img.src = ev.target.result;
+                try{ localStorage.setItem(storageKey, ev.target.result); }catch(e){}
+              };
+              reader.readAsDataURL(file);
+            });
+          }
+
+          if(resetBtn){
+            resetBtn.addEventListener('click', function(){
+              try{ localStorage.removeItem(storageKey); }catch(e){}
+              img.src = 'images/Façade Audifel.jpg';
+              if(input) input.value = '';
+            });
+          }
+        })();
+      </script>
 
       <div class="about-box">
         <p data-fr>
@@ -940,7 +1011,7 @@
       <div class="locations-grid">
         <!-- ORAN -->
         <div class="location-card">
-          <div class="placeholder-img" data-text="🖼️ Siège Oran" style="height:180px; border-radius:12px; margin-bottom:15px;"></div>
+          <img src="images/Oran.jpg" alt="Siège Oran" class="location-photo" style="height:180px; border-radius:12px; margin-bottom:15px; object-fit:cover;">
           <h3><span>🏢</span> <span data-fr>Siège Oran</span><span data-ar>المقر الرئيسي وهران</span><span class="badge-siège">Siège</span></h3>
           <div class="address"><span data-fr>📍 23 Bd Emir Abdelkader, Oran</span><span data-ar>📍 23 شارع الأمير عبد القادر، وهران</span></div>
           <div class="hours"><strong data-fr>Horaires :</strong><strong data-ar>ساعات العمل :</strong><br><span data-fr>Sam - Jeu : 08:30 - 17:00</span><span data-ar>السبت - الخميس : 08:30 - 17:00</span></div>
@@ -949,7 +1020,7 @@
         </div>
         <!-- TLEMCEN -->
         <div class="location-card">
-          <div class="placeholder-img" data-text="🖼️ Centre Tlemcen" style="height:180px; border-radius:12px; margin-bottom:15px;"></div>
+          <img src="images/Tlemcen.jpg" alt="Centre Tlemcen" class="location-photo" style="height:180px; border-radius:12px; margin-bottom:15px; object-fit:cover;">
           <h3>🏥 <span data-fr>Centre Tlemcen</span><span data-ar>مركز تلمسان</span></h3>
           <div class="address"><span data-fr>📍 5 Rue de la République, Tlemcen</span><span data-ar>📍 5 شارع الجمهورية، تلمسان</span></div>
           <div class="hours"><strong data-fr>Horaires :</strong><strong data-ar>المواعيد :</strong><br><span data-fr>Dim - Jeu : 08:30 - 16:30</span><span data-ar>الأحد - الخميس : 08:30 - 16:30</span></div>
@@ -958,7 +1029,7 @@
         </div>
         <!-- SAIDA -->
         <div class="location-card">
-          <div class="placeholder-img" data-text="🖼️ Centre Saida" style="height:180px; border-radius:12px; margin-bottom:15px;"></div>
+          <img src="images/Saida.jpg" alt="Centre Saida" class="location-photo" style="height:180px; border-radius:12px; margin-bottom:15px; object-fit:cover;">
           <h3>🏥 <span data-fr>Centre Saida</span><span data-ar>مركز سعيدة</span></h3>
           <div class="address"><span data-fr>📍 8 Rue de la Liberté, Saida</span><span data-ar>📍 8 شارع الحرية، سعيدة</span></div>
           <div class="hours"><strong data-fr>Horaires :</strong><strong data-ar>المواعيد :</strong><br><span data-fr>Sam - Jeu : 08:30 - 16:30</span><span data-ar>السبت - الخميس : 08:30 - 16:30</span></div>
@@ -967,7 +1038,7 @@
         </div>
         <!-- TIARET -->
         <div class="location-card">
-          <div class="placeholder-img" data-text="🖼️ Centre Tiaret" style="height:180px; border-radius:12px; margin-bottom:15px;"></div>
+          <img src="images/Tiaret.jpg" alt="Centre Tiaret" class="location-photo" style="height:180px; border-radius:12px; margin-bottom:15px; object-fit:cover;">
           <h3>🏥 <span data-fr>Centre Tiaret</span><span data-ar>مركز تيارت</span></h3>
           <div class="address"><span data-fr>📍 15 Av Colonel Lotfi, Tiaret</span><span data-ar>📍 15 شارع العقيد لطفي، تيارت</span></div>
           <div class="hours"><strong data-fr>Horaires :</strong><strong data-ar>المواعيد :</strong><br><span data-fr>Dim - Jeu : 08:30 - 16:30</span><span data-ar>الأحد - الخميس : 08:30 - 16:30</span></div>
@@ -976,7 +1047,7 @@
         </div>
         <!-- MOSTAGANEM -->
         <div class="location-card">
-          <div class="placeholder-img" data-text="🖼️ Centre Mostaganem" style="height:180px; border-radius:12px; margin-bottom:15px;"></div>
+          <img src="images/Mostaganem.jpg" alt="Centre Mostaganem" class="location-photo" style="height:180px; border-radius:12px; margin-bottom:15px; object-fit:cover;">
           <h3>🏥 <span data-fr>Centre Mostaganem</span><span data-ar>مركز مستغانم</span></h3>
           <div class="address"><span data-fr>📍 5 Rue Benyahia, Mostaganem</span><span data-ar>📍 5 شارع بن يحيى، مستغانم</span></div>
           <div class="hours"><strong data-fr>Horaires :</strong><strong data-ar>المواعيد :</strong><br><span data-fr>Sam - Jeu : 08:30 - 16:30</span><span data-ar>السبت - الخميس : 08:30 - 16:30</span></div>
@@ -985,7 +1056,7 @@
         </div>
         <!-- RELIZANE -->
         <div class="location-card">
-          <div class="placeholder-img" data-text="🖼️ Centre Relizane" style="height:180px; border-radius:12px; margin-bottom:15px;"></div>
+          <img src="images/Relizane.jpg" alt="Centre Relizane" class="location-photo" style="height:180px; border-radius:12px; margin-bottom:15px; object-fit:cover;">
           <h3>🏥 <span data-fr>Centre Relizane</span><span data-ar>مركز غليزان</span></h3>
           <div class="address"><span data-fr>📍 10 Rue 1er Novembre, Relizane</span><span data-ar>📍 10 شارع أول نوفمبر، غليزان</span></div>
           <div class="hours"><strong data-fr>Horaires :</strong><strong data-ar>المواعيد :</strong><br><span data-fr>Sam - Jeu : 08:30 - 16:30</span><span data-ar>السبت - الخميس : 08:30 - 16:30</span></div>
@@ -994,7 +1065,7 @@
         </div>
         <!-- CHLEF -->
         <div class="location-card">
-          <div class="placeholder-img" data-text="🖼️ Centre Chlef" style="height:180px; border-radius:12px; margin-bottom:15px;"></div>
+          <img src="images/Chlef.jpg" alt="Centre Chlef" class="location-photo" style="height:180px; border-radius:12px; margin-bottom:15px; object-fit:cover;">
           <h3>🏥 <span data-fr>Centre Chlef</span><span data-ar>مركز الشلف</span></h3>
           <div class="address"><span data-fr>📍 3 Bd des Martyrs, Chlef</span><span data-ar>📍 3 شارع الشهداء، الشلف</span></div>
           <div class="hours"><strong data-fr>Horaires :</strong><strong data-ar>المواعيد :</strong><br><span data-fr>Sam - Jeu : 09:00 - 17:00</span><span data-ar>السبت - الخميس : 09:00 - 17:00</span></div>
@@ -1003,7 +1074,7 @@
         </div>
         <!-- SETIF -->
         <div class="location-card">
-          <div class="placeholder-img" data-text="🖼️ Centre Sétif" style="height:180px; border-radius:12px; margin-bottom:15px;"></div>
+          <img src="images/Setif.jpg" alt="Centre Sétif" class="location-photo" style="height:180px; border-radius:12px; margin-bottom:15px; object-fit:cover;">
           <h3>🏥 <span data-fr>Centre Sétif</span><span data-ar>مركز سطيف</span></h3>
           <div class="address"><span data-fr>📍 20 Rue de la Révolution, Sétif</span><span data-ar>📍 20 شارع الثورة، سطيف</span></div>
           <div class="hours"><strong data-fr>Horaires :</strong><strong data-ar>المواعيد :</strong><br><span data-fr>Sam - Jeu : 08:30 - 17:00</span><span data-ar>السبت - الخميس : 08:30 - 17:00</span></div>
@@ -1012,7 +1083,7 @@
         </div>
         <!-- ANNABA -->
         <div class="location-card">
-          <div class="placeholder-img" data-text="🖼️ Centre Annaba" style="height:180px; border-radius:12px; margin-bottom:15px;"></div>
+          <img src="images/Annaba.jpg" alt="Centre Annaba" class="location-photo" style="height:180px; border-radius:12px; margin-bottom:15px; object-fit:cover;">
           <h3>🏥 <span data-fr>Centre Annaba</span><span data-ar>مركز عنابة</span></h3>
           <div class="address"><span data-fr>📍 7 Rue de la Victoire, Annaba</span><span data-ar>📍 7 شارع النصر، عنابة</span></div>
           <div class="hours"><strong data-fr>Horaires :</strong><strong data-ar>المواعيد :</strong><br><span data-fr>Sam - Jeu : 09:00 - 17:30</span><span data-ar>السبت - الخميس : 09:00 - 17:30</span></div>
@@ -1020,8 +1091,8 @@
           <p style="font-weight:600; color:#0b5ead;">📞 +213 38 00 00 09</p>
         </div>
         <!-- CONSTANTINE -->
-        <div class="location-card">
-          <div class="placeholder-img" data-text="🖼️ Centre Constantine" style="height:180px; border-radius:12px; margin-bottom:15px;"></div>
+        <div class="location-card" style="grid-column:1 / -1; max-width:640px; margin:0 auto; text-align:center;">
+          <img src="images/Constantine.jpg" alt="Centre Constantine" class="location-photo" style="height:180px; border-radius:12px; margin-bottom:15px; object-fit:cover;">
           <h3>🏥 <span data-fr>Centre Constantine</span><span data-ar>مركز قسنطينة</span></h3>
           <div class="address"><span data-fr>📍 12 Rue Ben M'hidi, Constantine</span><span data-ar>📍 12 شارع بن مهيدي، قسنطينة</span></div>
           <div class="hours"><strong data-fr>Horaires :</strong><strong data-ar>المواعيد :</strong><br><span data-fr>Sam - Jeu : 08:30 - 17:00</span><span data-ar>السبت - الخميس : 08:30 - 17:00</span></div>
@@ -1031,6 +1102,59 @@
       </div>
     </section>
 
+    <!-- GALERIE -->
+    <section id="gallery" style="background: #fff;">
+      <h2 class="section-title"><span data-fr>Galerie Photos</span><span data-ar>معرض الصور</span></h2>
+      <div class="divider"></div>
+      <style>
+        .gallery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin:18px 0 10px}
+        .gallery-item{display:block;border-radius:12px;overflow:hidden;box-shadow:0 8px 20px rgba(11,94,173,0.08);}
+        .gallery-item img{width:100%;height:160px;object-fit:cover;display:block;transition:transform .25s}
+        .gallery-item:hover img{transform:scale(1.04)}
+        .gallery-hint{color:#516b86;text-align:center;margin-top:12px;font-size:0.95rem}
+        /* lightbox styles */
+        .lightbox-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;padding:24px;z-index:9999}
+        .lightbox-overlay img{max-width:100%;max-height:100%;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,0.6)}
+      </style>
+
+      <div class="gallery-grid">
+        <a class="gallery-item" href="images/gallery/photo1.svg"><img src="images/gallery/photo1.svg" alt="Photo 1" loading="lazy"></a>
+        <a class="gallery-item" href="images/gallery/photo2.jpg"><img src="images/gallery/photo2.jpg" alt="Photo 2" loading="lazy"></a>
+        <a class="gallery-item" href="images/gallery/photo3.jpg"><img src="images/gallery/photo3.jpg" alt="Photo 3" loading="lazy"></a>
+        <a class="gallery-item" href="images/gallery/photo4.jpg"><img src="images/gallery/photo4.jpg" alt="Photo 4" loading="lazy"></a>
+        <a class="gallery-item" href="images/gallery/photo5.jpg"><img src="images/gallery/photo5.jpg" alt="Photo 5" loading="lazy"></a>
+        <a class="gallery-item" href="images/gallery/photo6.jpg"><img src="images/gallery/photo6.jpg" alt="Photo 6" loading="lazy"></a>
+      </div>
+
+      <p class="gallery-hint" data-fr>Place tes photos dans le dossier <code>images/gallery/</code> et nomme-les photo1.jpg ... photo6.jpg. Les images seront affichées automatiquement. Remplace ou ajoute des éléments <code>&lt;a&gt;</code> si tu veux plus de photos.</p>
+      <p class="gallery-hint" data-ar>ضع صورك في المجلد <code>images/gallery/</code> وسميها photo1.jpg ... photo6.jpg. سيتم عرض الصور تلقائياً.</p>
+
+      <script>
+        (function(){
+          // simple lightbox: open clicked image in overlay
+          function openLightbox(src, alt){
+            const overlay = document.createElement('div');
+            overlay.className = 'lightbox-overlay';
+            overlay.tabIndex = 0;
+            overlay.innerHTML = '<img src="'+src+'" alt="'+(alt||'')+'">';
+            overlay.addEventListener('click', function(){ document.body.removeChild(overlay); });
+            overlay.addEventListener('keydown', function(e){ if(e.key === 'Escape') { if(document.body.contains(overlay)) document.body.removeChild(overlay); } });
+            document.body.appendChild(overlay);
+            overlay.focus();
+          }
+
+          document.addEventListener('click', function(e){
+            const a = e.target.closest('.gallery-item');
+            if(a){
+              e.preventDefault();
+              const img = a.querySelector('img');
+              const href = a.getAttribute('href') || img.src;
+              openLightbox(href, img.alt);
+            }
+          });
+        })();
+      </script>
+
     <!-- CONTACT -->
     <section id="contact">
       <h2 class="section-title"><span data-fr>Contactez-nous</span><span data-ar>اتصل بنا</span></h2>
@@ -1038,7 +1162,18 @@
       <div class="contact-box">
         <p data-fr style="font-size:1.1rem;">Pour un rendez-vous ou un conseil :</p>
         <p data-ar style="font-size:1.1rem;">لحجز موعد أو استشارة :</p>
-        <a href="tel:+213661103501" class="phone-link">📞 +213 661 10 35 01</a>
+        <div style="margin-top:12px; display:flex; gap:12px; flex-wrap:wrap; justify-content:center; align-items:center;">
+          <a href="tel:+213661103501" class="phone-link">📞 +213 661 10 35 01</a>
+          <a href="tel:+213661103502" class="phone-link">📞 +213 661 10 35 02</a>
+          <a href="tel:+213661103504" class="phone-link">📞 +213 661 10 35 04</a>
+        </div>
+        <div style="margin-top:12px; text-align:center;">
+          <a href="mailto:marketingaudifel@gmail.com" style="color:#0b5ead;font-weight:700;text-decoration:none;">✉️ marketingaudifel@gmail.com</a>
+        </div>
+        <div style="margin-top:12px; text-align:center; display:flex; gap:10px; justify-content:center; align-items:center;">
+          <a href="https://www.facebook.com/Audifel.Sarl?locale=fr_FR" target="_blank" rel="noopener" style="color:#0b5ead;font-weight:700;text-decoration:none;">🔗 Facebook</a>
+          <a href="https://wa.me/213661103501" target="_blank" rel="noopener" style="color:#25D366;font-weight:700;text-decoration:none;">💬 WhatsApp +213 661 10 35 01</a>
+        </div>
         <p style="margin-top: 22px; color: #1a3557;" data-fr>🏥 10 centres en Algérie</p>
         <p style="margin-top: 22px; color: #1a3557;" data-ar>🏥 10 مراكز في الجزائر</p>
       </div>
@@ -1048,22 +1183,217 @@
   <footer>
     <p data-fr>© 2026 AUDIFEL — Distributeur Agréé Audifon & Hansaton<br>Oran, Tlemcen, Saida, Tiaret, Mostaganem, Relizane, Chlef, Sétif, Annaba, Constantine.</p>
     <p data-ar>© 2026 أوديفال — موزع معتمد لـ Audifon و Hansaton<br>وهران، تلمسان، سعيدة، تيارت، مستغانم، غليزان، الشلف، سطيف، عنابة، قسنطينة.</p>
+    <div style="margin-top:10px; text-align:center;">
+      <a href="https://www.facebook.com/Audifel.Sarl?locale=fr_FR" target="_blank" rel="noopener" style="margin-right:12px; color:#0b5ead; font-weight:700; text-decoration:none;">🔗 Facebook</a>
+      <a href="https://wa.me/213661103501" target="_blank" rel="noopener" style="margin-right:12px; color:#25D366; font-weight:700; text-decoration:none;">💬 WhatsApp +213 661 10 35 01</a>
+      <a href="mailto:marketingaudifel@gmail.com" style="color:#0b5ead; font-weight:700; text-decoration:none;">✉️ marketingaudifel@gmail.com</a>
+    </div>
   </footer>
 
   <script>
     (function() {
       const body = document.body;
       const toggleBtn = document.getElementById('langToggle');
-      body.classList.remove('rtl');
-      document.documentElement.lang = 'fr';
-      toggleBtn.addEventListener('click', function() {
-        const isRtl = body.classList.toggle('rtl');
-        document.documentElement.lang = isRtl ? 'ar' : 'fr';
-        try { localStorage.setItem('audifel-lang', isRtl ? 'ar' : 'fr'); } catch(e) {}
-      });
+
+      // Apply saved preference (if any) safely on load
+      try {
+        const saved = localStorage.getItem('audifel-lang');
+        if (saved === 'ar') {
+          body.classList.add('rtl');
+          document.documentElement.lang = 'ar';
+        } else {
+          body.classList.remove('rtl');
+          document.documentElement.lang = 'fr';
+        }
+      } catch (e) { /* localStorage may be unavailable */ }
+
+      // Only attach handler if the button exists
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', function() {
+          const isRtl = body.classList.toggle('rtl');
+          document.documentElement.lang = isRtl ? 'ar' : 'fr';
+          try { localStorage.setItem('audifel-lang', isRtl ? 'ar' : 'fr'); } catch (e) {}
+        });
+      }
+
+      // Ensure DOMContentLoaded fallback (safe)
       window.addEventListener('DOMContentLoaded', function() {
-        try { if(localStorage.getItem('audifel-lang') === 'ar') { body.classList.add('rtl'); document.documentElement.lang = 'ar'; } } catch(e) {}
+        try {
+          const saved = localStorage.getItem('audifel-lang');
+          if (saved === 'ar') {
+            body.classList.add('rtl');
+            document.documentElement.lang = 'ar';
+          }
+        } catch (e) {}
       });
+    })();
+  </script>
+  <script>
+    // Enable adding/uploading images on any image across the page.
+    (function(){
+      // create hidden file input used for all images
+      const upload = document.createElement('input');
+      upload.type = 'file';
+      upload.accept = 'image/*';
+      upload.style.display = 'none';
+      document.body.appendChild(upload);
+
+      // inject lightweight CSS for overlay buttons (add + reset)
+      const css = `
+        .photo-edit-wrapper{position:relative;display:inline-block}
+        .photo-edit-wrapper img{display:block;max-width:100%;height:auto}
+        .add-photo-overlay{position:absolute;top:8px;right:8px;z-index:20;background:linear-gradient(145deg,#0b5ead,#0a4f8a);color:#fff;border:0;padding:6px 8px;border-radius:8px;cursor:pointer;font-weight:700;box-shadow:0 6px 16px rgba(11,94,173,0.35);display:flex;align-items:center;justify-content:center}
+        .add-photo-overlay:hover{transform:scale(1.05)}
+        .reset-photo-overlay{position:absolute;top:8px;left:8px;z-index:20;background:#fff;border:1px solid #d5e7fa;padding:6px 8px;border-radius:8px;cursor:pointer;font-weight:700;color:#0b5ead;box-shadow:0 6px 14px rgba(11,94,173,0.06)}
+        .reset-photo-overlay:hover{transform:scale(1.05)}
+        .add-photo-icon{width:16px;height:16px;display:block}
+        .reset-icon{width:14px;height:14px;display:block}
+      `;
+      const styleEl = document.createElement('style'); styleEl.appendChild(document.createTextNode(css)); document.head.appendChild(styleEl);
+
+      // process all images (except ones explicitly opted out)
+      const imgs = Array.from(document.querySelectorAll('img'));
+      imgs.forEach((img, idx) => {
+        if (img.closest('.photo-no-edit')) return; // opt-out class
+        // avoid double-wrapping if already wrapped
+        if (img.parentElement && img.parentElement.classList.contains('photo-edit-wrapper')) return;
+
+        // create wrapper and overlay buttons
+        const wrapper = document.createElement('span');
+        wrapper.className = 'photo-edit-wrapper';
+        // preserve layout: if original img was block-level, keep wrapper block
+        const imgDisplay = window.getComputedStyle(img).display || 'inline-block';
+        wrapper.style.display = imgDisplay === 'block' ? 'block' : 'inline-block';
+
+        // remember original src so reset can restore it
+        const originalSrc = img.getAttribute('src');
+
+        img.parentNode.insertBefore(wrapper, img);
+        wrapper.appendChild(img);
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'add-photo-overlay';
+        btn.title = 'Ajouter / remplacer la photo';
+        btn.setAttribute('aria-label', 'Ajouter ou remplacer la photo');
+        // SVG plus icon
+        btn.innerHTML = '<svg class="add-photo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" fill="#ffffff" opacity="0.12"/><path d="M12 6v12M6 12h12" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        wrapper.appendChild(btn);
+
+        const resetBtn = document.createElement('button');
+        resetBtn.type = 'button';
+        resetBtn.className = 'reset-photo-overlay';
+        resetBtn.title = 'Restaurer l\'image originale';
+        resetBtn.setAttribute('aria-label','Restaurer l\'image originale');
+        resetBtn.innerHTML = '<svg class="reset-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 11a8 8 0 10-2.3 5.3L20 20" stroke="#0b5ead" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        wrapper.appendChild(resetBtn);
+
+        // storage key to persist per-image (use image id if present, else index)
+        const key = 'audifel-img-' + (img.id ? img.id : idx);
+        try{
+          const stored = localStorage.getItem(key);
+          if (stored) img.src = stored;
+        }catch(e){}
+
+        btn.addEventListener('click', function(e){
+          e.preventDefault();
+          upload.onchange = function(ev){
+            const file = ev.target.files && ev.target.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) { alert('Fichier non supporté'); return; }
+            const reader = new FileReader();
+            reader.onload = function(loadEv){
+              img.src = loadEv.target.result;
+              try{ localStorage.setItem(key, loadEv.target.result); } catch(e) {}
+            };
+            reader.readAsDataURL(file);
+            // reset input for future selections
+            upload.value = '';
+          };
+          upload.click();
+        });
+
+        resetBtn.addEventListener('click', function(e){
+          e.preventDefault();
+          try{ localStorage.removeItem(key); } catch(e) {}
+          img.src = originalSrc;
+        });
+      });
+    })();
+  </script>
+  <script>
+    (function(){
+      const overlay = document.getElementById('authOverlay');
+      const form = document.getElementById('authForm');
+      const userIn = document.getElementById('authUser');
+      const passIn = document.getElementById('authPass');
+      const title = document.getElementById('authTitle');
+      const setupHint = document.getElementById('setupHint');
+      const resetBtn = document.getElementById('authReset');
+
+      function toHex(buffer){
+        const hexCodes = [];
+        const view = new DataView(buffer);
+        for (let i = 0; i < view.byteLength; i += 4) {
+          // read 4 bytes and convert
+          const value = view.getUint32(i);
+          const stringValue = value.toString(16).padStart(8, '0');
+          hexCodes.push(stringValue);
+        }
+        return hexCodes.join('');
+      }
+
+      async function hashPwd(pwd){
+        const enc = new TextEncoder().encode(pwd);
+        const hash = await (window.crypto && crypto.subtle ? crypto.subtle.digest('SHA-256', enc) : Promise.resolve(new Uint8Array()));
+        return toHex(hash);
+      }
+
+      function showOverlay(){ if(overlay){ overlay.style.display = 'flex'; overlay.setAttribute('aria-hidden','false'); } }
+      function hideOverlay(){ if(overlay){ overlay.style.display = 'none'; overlay.setAttribute('aria-hidden','true'); } }
+
+      const adminRaw = (function(){ try{ return localStorage.getItem('audifel-admin'); }catch(e){return null;} })();
+      let isSetup = !adminRaw;
+
+      if(isSetup){ if(title) title.textContent = 'Créer un identifiant administrateur'; if(setupHint) setupHint.style.display = 'block'; if(resetBtn) resetBtn.style.display = 'none'; }
+      else { if(title) title.textContent = 'Se connecter'; if(setupHint) setupHint.style.display = 'none'; if(resetBtn) resetBtn.style.display = 'inline-block'; }
+
+      // always require authentication overlay unless session exists
+      try{
+        const session = localStorage.getItem('audifel-session');
+        if(!session) showOverlay(); else hideOverlay();
+      }catch(e){ showOverlay(); }
+
+      if(form){
+        form.addEventListener('submit', async function(e){
+          e.preventDefault();
+          const u = userIn && userIn.value ? userIn.value.trim() : '';
+          const p = passIn && passIn.value ? passIn.value : '';
+          if(!u || !p){ alert("Remplis les deux champs"); return; }
+          if(isSetup){
+            const h = await hashPwd(p);
+            try{ localStorage.setItem('audifel-admin', JSON.stringify({user:u,hash:h})); localStorage.setItem('audifel-session', Date.now().toString()); }catch(e){ alert('Impossible d\u0027enregistrer les identifiants : ' + e.message); }
+            hideOverlay();
+            return;
+          } else {
+            try{
+              const admin = JSON.parse(adminRaw);
+              const h = await hashPwd(p);
+              if(admin && admin.user === u && admin.hash === h){ localStorage.setItem('audifel-session', Date.now().toString()); hideOverlay(); }
+              else { alert("Nom d'utilisateur ou mot de passe incorrect"); }
+            }catch(err){ alert('Erreur lors de la vérification des identifiants'); }
+          }
+        });
+      }
+
+      if(resetBtn){
+        resetBtn.addEventListener('click', function(){
+          if(confirm('Supprimer les identifiants administrateur enregistrés ?')){
+            try{ localStorage.removeItem('audifel-admin'); localStorage.removeItem('audifel-session'); }catch(e){}
+            location.reload();
+          }
+        });
+      }
     })();
   </script>
 </body>
